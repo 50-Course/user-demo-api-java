@@ -15,7 +15,6 @@ import org.springframework.web.bind.annontation.DeleteMapping;
 import org.springframework.web.bind.annontation.RequestBody;
 import org.springframework.web.bind.annontation.RestController;
 
-
 @RequestMapping("users")
 @RestController
 public class PersonController {
@@ -34,6 +33,10 @@ public class PersonController {
     public Person getUserByID(@PathVariable("id") UUID id) {
         Optional<Person> person = personDAO.findById(id);
 
+        // we have to use the `person.get` to actually retrieve the Person instance
+        // because `findById` does not return a Java Class Object as opposed to using
+        // `getOne` command. This is due to the fact that it could return null object
+        // if the objects in the database is empty
         if (person.isPresent()) {
             return person.get();
         } else {
@@ -47,8 +50,7 @@ public class PersonController {
     }
 
     @PutMapping
-    public void updatePersonInfo(@RequestBody Person newPersonInfo) {
-        Person person = personDAO.getOne(newPersonInfo);
+
         person = newPersonInfo;
         return personDAO.save(person);
 
